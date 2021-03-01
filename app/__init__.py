@@ -1,10 +1,7 @@
 from flask import Flask, render_template
+from config import Config
 
 app = Flask(__name__)
+app.config.from_object(Config)
 
-
-@app.route('/')
-@app.route('/index')
-def hello_world():
-    title = "Kekambas Blog | HOME"
-    return render_template('index.html', title=title)
+from app import routes
