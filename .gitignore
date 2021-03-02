@@ -2,3 +2,4 @@ kekembas_venv/
 .vscode/
 __pycache__/
 .env
+app.db
