@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template, request
-from app.forms import UserInfoForm
+from app.forms import UserInfoForm, PostForm
 
 @app.route('/')
 @app.route('/index')
@@ -23,3 +23,14 @@ def register():
         password = form.password.data
         print(username, email, password)
     return render_template('register.html', title=title, form=form)
+
+
+@app.route('/createpost', methods=['GET', 'POST'])
+def createpost():
+    title = "Kekambas Blog | CREATE POST"
+    post = PostForm()
+    if request.method == 'POST' and post.validate():
+        post_title = post.title.data
+        content = post.content.data
+        print(post_title, content)
+    return render_template('create_post.html', post=post, title=title)
