@@ -1,6 +1,7 @@
-from app import app
-from flask import render_template, request
+from app import app, db
+from flask import render_template, request, flash, redirect, url_for
 from app.forms import UserInfoForm, PostForm
+from app.models import User
 
 @app.route('/')
 @app.route('/index')
@@ -21,7 +22,17 @@ def register():
         username = form.username.data
         email = form.email.data
         password = form.password.data
-        print(username, email, password)
+        # print(username, email, password)
+        
+        # create a new instance of User
+        new_user = User(username, email, password)
+        # add new instance to our database
+        db.session.add(new_user)
+        # commit database
+        db.session.commit()
+
+        flash("You have succesfully signed up!", "success")
+        return redirect(url_for('hello_world'))
     return render_template('register.html', title=title, form=form)
 
 
