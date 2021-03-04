@@ -1,8 +1,8 @@
 from app import app, db, mail, Message
 from flask import render_template, request, flash, redirect, url_for
 from app.forms import UserInfoForm, PostForm, LoginForm
-from app.models import User
-from flask_login import login_user, logout_user, login_required
+from app.models import User, Post
+from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 
 @app.route('/')
@@ -10,8 +10,7 @@ from werkzeug.security import check_password_hash
 def index():
     context = {
         'title': 'Kekambas Blog | HOME',
-        'customer_name': 'Brian',
-        'customer_username': 'bstanton'
+        'posts': Post.query.all()
     }
     return render_template('index.html', **context)
 
@@ -53,7 +52,18 @@ def createpost():
     if request.method == 'POST' and post.validate():
         post_title = post.title.data
         content = post.content.data
-        print(post_title, content)
+        user_id = current_user.id
+        # print(post_title, content)
+        # Create new Post instance
+        new_post = Post(post_title, content, user_id)
+        # Add new post instance to database
+        db.session.add(new_post)
+        # Commit
+        db.session.commit()
+        # flash a message
+        flash("You have successfully created a post!", 'success')
+        # redirect back to create post
+        return redirect(url_for('createpost'))
     return render_template('create_post.html', post=post, title=title)
 
 
@@ -72,7 +82,7 @@ def login():
             return redirect(url_for('login'))
         
         login_user(user, remember=form.remember_me.data)
-        flash("You have successfully logged in!", 'success')3
+        flash("You have successfully logged in!", 'success')
         next_page = request.args.get('next')
         if next_page:
             return redirect(url_for(next_page.lstrip('/')))

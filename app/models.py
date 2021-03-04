@@ -20,6 +20,9 @@ class User(db.Model, UserMixin):
         self.email = email
         self.password = generate_password_hash(password)
 
+    def __repr__(self):
+        return f'<User: {self.username} | {self.email}>'
+
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -33,5 +36,5 @@ class Post(db.Model):
         self.content = content
         self.user_id = user_id
 
-    def do_something(self):
-        return self.title
+    def __repr__(self):
+        return f'<Post: {self.title}>'
