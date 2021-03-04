@@ -10,7 +10,7 @@ from werkzeug.security import check_password_hash
 def index():
     context = {
         'title': 'Kekambas Blog | HOME',
-        'posts': Post.query.all()
+        'posts': Post.query.order_by(Post.date_created.desc()).all()
     }
     return render_template('index.html', **context)
 
@@ -95,4 +95,62 @@ def login():
 def logout():
     logout_user()
     flash("You have succesfully logged out", 'primary')
+    return redirect(url_for('index'))
+
+
+@app.route('/myinfo')
+@login_required
+def myinfo():
+    title = "Kekambas Blog | MY INFO"
+    return render_template('my_info.html', title=title)
+
+
+@app.route('/myposts')
+@login_required
+def myposts():
+    title = "Kekambas Blog | MY POSTS"
+    posts = current_user.posts
+    return render_template('my_posts.html', title=title, posts=posts)
+
+
+@app.route('/myposts/<int:post_id>')
+@login_required
+def post_detail(post_id):
+    post = Post.query.get_or_404(post_id)
+    title = f"Kekambas Blog | {post.title.upper()}"
+    return render_template('post_detail.html', post=post, title=title)
+
+
+@app.route('/myposts/update/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def post_update(post_id):
+    post = Post.query.get_or_404(post_id)
+    update_form = PostForm()
+    if post.author.id != current_user.id:
+        flash("You cannot update another user's post", 'danger')
+        return redirect(url_for('myposts'))
+    if request.method == 'POST' and update_form.validate():
+        post_title = update_form.title.data
+        content = update_form.content.data
+
+        post.title = post_title
+        post.content = content
+
+        db.session.commit()
+        flash("Your post has been updated.", 'info')
+        return redirect(url_for('post_detail', post_id=post.id))
+
+    return render_template('post_update.html', form=update_form, post=post)
+
+
+@app.route('/myposts/delete/<int:post_id>', methods=['POST'])
+@login_required
+def post_delete(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author.id != current_user.id:
+        flash("You cannot delete another user's post", 'danger')
+        return redirect(url_for('myposts'))
+    db.session.delete(post)
+    db.session.commit()
+    flash("This post has been deleted", 'info')
     return redirect(url_for('index'))
