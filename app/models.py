@@ -38,3 +38,20 @@ class Post(db.Model):
 
     def __repr__(self):
         return f'<Post: {self.title}>'
+
+
+class Kekambas(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(150), nullable=False)
+    last_name = db.Column(db.String(150), nullable=False)
+
+    def __init__(self, first, last):
+        self.first_name = first
+        self.last_name = last
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'fist_name': self.first_name,
+            'last_name': self.last_name
+        }

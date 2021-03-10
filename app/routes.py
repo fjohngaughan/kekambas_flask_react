@@ -1,7 +1,7 @@
 from app import app, db, mail, Message
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, jsonify
 from app.forms import UserInfoForm, PostForm, LoginForm
-from app.models import User, Post
+from app.models import User, Post, Kekambas
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 
@@ -154,3 +154,9 @@ def post_delete(post_id):
     db.session.commit()
     flash("This post has been deleted", 'info')
     return redirect(url_for('index'))
+
+
+@app.route('/kekambas')
+def kekambas():
+    students = Kekambas.query.all()
+    return jsonify([s.to_dict() for s in students])
