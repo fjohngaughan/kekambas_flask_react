@@ -52,6 +52,6 @@ class Kekambas(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'fist_name': self.first_name,
+            'first_name': self.first_name,
             'last_name': self.last_name
         }
