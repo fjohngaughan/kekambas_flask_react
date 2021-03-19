@@ -10,7 +10,7 @@
 <blockquote>Date Created: {{ post.date_created }}</blockquote>
 
 <!-- Update Button -->
-<a href="{{ url_for('post_update', post_id=post.id) }}"><button class="btn btn-primary">Update</button></a>
+<a href="{{ url_for('blog.post_update', post_id=post.id) }}"><button class="btn btn-primary">Update</button></a>
 
 <!-- Delete Button -->
 <!-- Button trigger modal -->

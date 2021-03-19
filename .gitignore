@@ -1,4 +1,4 @@
-kekembas_venv/
+venv/
 .vscode/
 __pycache__/
 .env
